@@ -1,0 +1,50 @@
+// AgenceServiceImpl.java
+package tn.esprit.autoloc.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tn.esprit.autoloc.domain.Agence;
+import tn.esprit.autoloc.exception.ResourceNotFoundException;
+import tn.esprit.autoloc.repository.IAgenceRepository;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class AgenceServiceImpl implements IAgenceService {
+
+    private final IAgenceRepository agenceRepository;
+
+    @Override
+    public Agence create(Agence agence) {
+        agence.setIdAgence(null);
+        return agenceRepository.save(agence);
+    }
+
+    @Override
+    public Agence update(Long id, Agence agence) {
+        findById(id);
+        agence.setIdAgence(id);
+        return agenceRepository.save(agence);
+    }
+
+    @Override
+    public void delete(Long id) {
+        agenceRepository.delete(findById(id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Agence findById(Long id) {
+        return agenceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Agence introuvable : id=" + id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Agence> findAll() {
+        return agenceRepository.findAll();
+    }
+}
